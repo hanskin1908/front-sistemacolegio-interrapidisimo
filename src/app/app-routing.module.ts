@@ -20,127 +20,86 @@ import { MateriasEstudianteGuard } from './guards/materias-estudiante.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/materias', pathMatch: 'full' },
+
+  { path: 'inicio-sesion', component: InicioSesionComponente },
+
+  { path: 'registro', component: RegistroComponente },
+
+  { path: 'perfil', component: PerfilComponente, canActivate: [AuthGuard] },
+  { path: '', redirectTo: '/materias', pathMatch: 'full' },
   { path: 'login', component: InicioSesionComponente },
   { path: 'inicio-sesion', component: InicioSesionComponente },
   { path: 'register', component: RegistroComponente },
   { path: 'registro', component: RegistroComponente },
   { path: 'profile', component: PerfilComponente, canActivate: [AuthGuard] },
   { path: 'perfil', component: PerfilComponente, canActivate: [AuthGuard] },
-  { 
-    path: 'students', 
-    component: ListaEstudiantesComponente, 
-    canActivate: [AuthGuard, EstudianteGuard]
-  },
+    
   { 
     path: 'estudiantes', 
     component: ListaEstudiantesComponente, 
     canActivate: [AuthGuard, EstudianteGuard]
   },
-  { 
-    path: 'students/new', 
-    component: FormularioEstudianteComponente, 
-    canActivate: [AuthGuard, AdminGuard]
-  },
+ 
   { 
     path: 'estudiantes/nuevo', 
     component: FormularioEstudianteComponente, 
     canActivate: [AuthGuard, AdminGuard]
   },
-  { 
-    path: 'students/:id', 
-    component: DetalleEstudianteComponente, 
-    canActivate: [AuthGuard, EstudianteGuard]
-  },
+  
   { 
     path: 'estudiantes/:id', 
     component: DetalleEstudianteComponente, 
     canActivate: [AuthGuard, EstudianteGuard]
   },
-  { 
-    path: 'students/:id/edit', 
-    component: FormularioEstudianteComponente, 
-    canActivate: [AuthGuard, AdminGuard]
-  },
+ 
   { 
     path: 'estudiantes/:id/editar', 
     component: FormularioEstudianteComponente, 
     canActivate: [AuthGuard, AdminGuard]
   },
-  { 
-    path: 'professors', 
-    component: ListaProfesoresComponente, 
-    canActivate: [AuthGuard]
-  },
+
   { 
     path: 'profesores', 
     component: ListaProfesoresComponente, 
     canActivate: [AuthGuard]
   },
-  { 
-    path: 'professors/new', 
-    component: FormularioProfesorComponente, 
-    canActivate: [AuthGuard, AdminGuard]
-  },
+ 
   { 
     path: 'profesores/nuevo', 
     component: FormularioProfesorComponente, 
     canActivate: [AuthGuard, AdminGuard]
   },
-  { 
-    path: 'professors/:id/edit', 
-    component: FormularioProfesorComponente, 
-    canActivate: [AuthGuard, AdminGuard]
-  },
+  
   { 
     path: 'profesores/:id/editar', 
     component: FormularioProfesorComponente, 
     canActivate: [AuthGuard, AdminGuard]
   },
-  { 
-    path: 'subjects', 
-    component: ListaMateriasComponente, 
-    canActivate: [AuthGuard]
-  },
+  
   { 
     path: 'materias', 
     component: ListaMateriasComponente, 
     canActivate: [AuthGuard]
   },
-  {
-    path: 'subjects/new',
-    component: FormularioAsignaturaComponente,
-    canActivate: [AuthGuard, AdminGuard]
-  },
+  
   {
     path: 'materias/nueva',
     component: FormularioAsignaturaComponente,
     canActivate: [AuthGuard, AdminGuard]
   },
-  {
-    path: 'subjects/:id/edit',
-    component: FormularioAsignaturaComponente,
-    canActivate: [AuthGuard, AdminGuard]
-  },
+ 
   {
     path: 'materias/:id/editar',
     component: FormularioAsignaturaComponente,
     canActivate: [AuthGuard, AdminGuard]
   },
-  { 
-    path: 'subjects/:id', 
-    component: DetalleMateriaComponente, 
-    canActivate: [AuthGuard, MateriasEstudianteGuard]
-  },
+
   { 
     path: 'materias/:id', 
     component: DetalleMateriaComponente, 
     canActivate: [AuthGuard, MateriasEstudianteGuard]
   },
-  { path: 'my-subjects',
-    component: RegistroMateriasComponente,
-    canActivate: [AuthGuard],
-    data: { role: 'student' }
-  },
+  
   { path: 'mis-materias',
     component: RegistroMateriasComponente,
     canActivate: [AuthGuard],

@@ -28,7 +28,7 @@ export class RegistroComponente implements OnInit {
       correo: ['', [Validators.required, Validators.email]],
       contrasena: ['', [Validators.required, Validators.minLength(6)]],
       confirmarContrasena: ['', [Validators.required]],
-      idEstudiante: [''],
+      idEstudiante: ['', [Validators.required]],
       idProfesor: [''],
       rol: ['estudiante', [Validators.required]]
     }, { validators: this.validadorCoincidenciaContrasena });
@@ -73,12 +73,22 @@ export class RegistroComponente implements OnInit {
       password: this.formularioRegistro.value.contrasena,
       role: this.formularioRegistro.value.rol
     };
-    if (this.formularioRegistro.value.rol === 'estudiante' && this.formularioRegistro.value.idEstudiante) {
+    if (this.formularioRegistro.value.rol === 'student') {
       datosRegistro.studentId = parseInt(this.formularioRegistro.value.idEstudiante, 10);
     }
-    if (this.formularioRegistro.value.rol === 'profesor' && this.formularioRegistro.value.idProfesor) {
+    if (this.formularioRegistro.value.rol === 'professor') {
       datosRegistro.professorId = parseInt(this.formularioRegistro.value.idProfesor, 10);
     }
+    this.autenticacionServicio.registrar(datosRegistro).subscribe({
+      next: () => {
+        this.cargando = false;
+        this.router.navigate(['/estudiantes']);
+      },
+      error: (mensajeError) => {
+        this.cargando = false;
+        this.error = mensajeError;
+      }
+    });
     this.autenticacionServicio.registrar(datosRegistro).subscribe({
       next: () => {
         this.cargando = false;

@@ -19,15 +19,17 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     // Detectar cambios en el estado de autenticación
     this.authService.user$.subscribe(user => {
-      this.userProfile = user;
-      if (user) {
-        this.isStudent = user.role === 'student';
-        this.isAdmin = user.role === 'admin';
-        this.isProfessor = user.role === 'professor';
-      } else {
-        this.isStudent = false;
-        this.isAdmin = false;
-        this.isProfessor = false;
+      if (user !== this.userProfile) {
+        this.userProfile = user;
+        if (user) {
+          this.isStudent = user.role === 'student';
+          this.isAdmin = user.role === 'admin';
+          this.isProfessor = user.role === 'professor';
+        } else {
+          this.isStudent = false;
+          this.isAdmin = false;
+          this.isProfessor = false;
+        }
       }
     });
   }

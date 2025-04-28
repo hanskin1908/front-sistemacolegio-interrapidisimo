@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Materia } from '../modelos/materia.modelo';
 import { Estudiante } from '../modelos/estudiante.modelo';
@@ -125,6 +125,18 @@ export class MateriaServicio {
   }
 
   obtenerMateriasPorIds(ids: number[]): Observable<Materia[]> {
+    // Si solo hay un ID, usar el endpoint de obtener una materia
+    if (ids.length === 1) {
+      return this.obtenerMateria(ids[0]).pipe(
+        map(materia => [materia]),
+        catchError(error => {
+          console.error('Error al obtener materia por ID u00fanico:', error);
+          return of([]);
+        })
+      );
+    }
+    
+    // Si hay mu00faltiples IDs, usar el endpoint multiple
     const queryParams = ids.map(id => `ids=${id}`).join('&');
     return this.http.get<any>(`${this.apiUrl}/multiple?${queryParams}`)
       .pipe(
@@ -143,7 +155,10 @@ export class MateriaServicio {
           }
           return [];
         }),
-        catchError(this.manejarError)
+        catchError(error => {
+          console.error('Error al obtener materias por mu00faltiples IDs:', error);
+          return this.manejarError(error);
+        })
       );
   }
 

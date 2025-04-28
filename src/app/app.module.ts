@@ -28,12 +28,17 @@ import { RegistroMateriasComponente } from './componentes/estudiantes/registro-m
 import { FormularioAsignaturaComponente } from './componentes/asignaturas/formulario-asignatura/formulario-asignatura.componente';
 
 export function tokenGetter() {
-  const userData = localStorage.getItem('userData');
-  if (!userData) {
+  try {
+    const userData = localStorage.getItem('userData');
+    if (!userData) {
+      return null;
+    }
+    const parsedData = JSON.parse(userData);
+    return parsedData._token;
+  } catch (error) {
+    console.error('Error getting token:', error);
     return null;
   }
-  const parsedData = JSON.parse(userData);
-  return parsedData._token;
 }
 
 @NgModule({
@@ -69,8 +74,8 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:5000'],
-        disallowedRoutes: ['localhost:5000/api/auth/login', 'localhost:5000/api/auth/register']
+        allowedDomains: ['localhost:5000', 'localhost:2305'],
+        disallowedRoutes: ['localhost:5000/api/auth/login', 'localhost:5000/api/auth/register', 'localhost:2305/api/auth/login', 'localhost:2305/api/auth/register']
       }
     })
   ],

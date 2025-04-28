@@ -14,6 +14,19 @@
       </div>
       <form [formGroup]="formularioEstudiante" (ngSubmit)="onSubmit()" *ngIf="!cargando">
         <div class="mb-3">
+          <label for="id" class="form-label">ID</label>
+          <input 
+            type="number" 
+            id="id" 
+            formControlName="id" 
+            class="form-control" 
+            [ngClass]="{'is-invalid': formularioEstudiante.get('id')?.invalid && formularioEstudiante.get('id')?.touched}"
+          >
+          <div *ngIf="formularioEstudiante.get('id')?.invalid && formularioEstudiante.get('id')?.touched" class="invalid-feedback">
+            <div *ngIf="formularioEstudiante.get('id')?.errors?.['required']">El ID es obligatorio</div>
+          </div>
+        </div>
+        <div class="mb-3">
           <label for="nombre" class="form-label">Nombre Completo</label>
           <input 
             type="text" 

@@ -65,7 +65,7 @@ export class RegistroMateriasComponente implements OnInit {
       this.cargando = false;
       return;
     }
-    
+    console.log('Debugging obtenerIdEstudianteActual',usuario);
     console.log('ID de estudiante:', usuario.studentId);
     
     if (usuario.role !== 'student') {

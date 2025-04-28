@@ -145,6 +145,7 @@ export class InscripcionServicio {
           return this.http.post<any>(this.apiUrl, solicitudBackend)
             .pipe(
               map(respuesta => {
+                console.log('Respuesta recibida:', solicitudBackend);
                 if (respuesta && respuesta.exito && respuesta.data) {
                   const item = respuesta.data;
                   // Convertir a formato Inscripcion

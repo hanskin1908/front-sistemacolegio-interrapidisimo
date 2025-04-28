@@ -67,42 +67,54 @@ export class AuthService {
       return;
     }
 
-    const parsedData: {
-      id: number;
-      name: string;
-      email: string;
-      role: string;
-      studentId?: string | number;
-      professorId?: string | number;
-      _token: string;
-      _tokenExpirationDate: string;
-    } = JSON.parse(userData);
+    try {
+      const parsedData: {
+        id: number;
+        name: string;
+        email: string;
+        role: string;
+        studentId?: string | number;
+        professorId?: string | number;
+        _token: string;
+        _tokenExpirationDate: string;
+      } = JSON.parse(userData);
 
-    // Check if token is expired
-    const token = parsedData._token;
-    if (this.jwtHelper.isTokenExpired(token)) {
+      // Check if token is expired
+      const token = parsedData._token;
+      if (!token || this.jwtHelper.isTokenExpired(token)) {
+        this.logout();
+        return;
+      }
+
+      const expirationDate = new Date(parsedData._tokenExpirationDate);
+      if (expirationDate <= new Date()) {
+        this.logout();
+        return;
+      }
+
+      // Crear usuario sin conversiones complejas para mejorar rendimiento
+      const user: UserProfile = {
+        id: parsedData.id,
+        name: parsedData.name,
+        email: parsedData.email,
+        role: parsedData.role,
+        studentId: parsedData.studentId ? Number(parsedData.studentId) : undefined,
+        professorId: parsedData.professorId ? Number(parsedData.professorId) : undefined
+      };
+
+      this.userSubject.next(user);
+      
+      // Calcular tiempo de expiración
+      const expirationDuration = expirationDate.getTime() - new Date().getTime();
+      if (expirationDuration > 0) {
+        this.autoLogout(expirationDuration);
+      } else {
+        this.logout();
+      }
+    } catch (error) {
+      console.error('Error during auto login:', error);
       this.logout();
-      return;
     }
-
-    const expirationDate = new Date(parsedData._tokenExpirationDate);
-    if (expirationDate <= new Date()) {
-      this.logout();
-      return;
-    }
-
-    const user: UserProfile = {
-      id: parsedData.id,
-      name: parsedData.name,
-      email: parsedData.email,
-      role: parsedData.role,
-      studentId: parsedData.studentId ? (typeof parsedData.studentId === 'string' ? parseInt(parsedData.studentId, 10) : parsedData.studentId) : undefined,
-      professorId: parsedData.professorId ? (typeof parsedData.professorId === 'string' ? parseInt(parsedData.professorId, 10) : parsedData.professorId) : undefined
-    };
-
-    this.userSubject.next(user);
-    const expirationDuration = expirationDate.getTime() - new Date().getTime();
-    this.autoLogout(expirationDuration);
   }
 
   autoLogout(expirationDuration: number) {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
+import { Observable, throwError, of, forkJoin } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Asignatura } from '../modelos/asignatura.modelo';
 import { Estudiante } from '../modelos/estudiante.modelo';
@@ -125,26 +125,39 @@ export class AsignaturaServicio {
   }
 
   obtenerAsignaturasPorIds(ids: number[]): Observable<Asignatura[]> {
-    const queryParams = ids.map(id => `ids=${id}`).join('&');
-    return this.http.get<any>(`${this.apiUrl}/multiple?${queryParams}`)
-      .pipe(
-        map(respuesta => {
-          if (respuesta && respuesta.exito && respuesta.data) {
-            return respuesta.data.map((item: any) => ({
-              id: item.id,
-              nombre: item.nombre,
-              codigo: item.codigo,
-              creditos: item.creditos,
-              profesorId: item.profesorId || 0,
-              profesor: item.nombreProfesor ?
-                this.crearObjetoProfesor(item.profesorId, item.nombreProfesor) :
-                undefined
-            }));
-          }
-          return [];
-        }),
-        catchError(this.manejarError)
+    // Si solo hay un ID, usar el endpoint de obtener una asignatura
+    if (ids.length === 1) {
+      return this.obtenerAsignatura(ids[0]).pipe(
+        map(asignatura => [asignatura]),
+        catchError(error => {
+          console.error('Error al obtener asignatura por ID único:', error);
+          return of([]);
+        })
       );
+    }
+    
+    // Si hay múltiples IDs, intentar obtener cada asignatura individualmente
+    // y combinar los resultados
+    console.log('Obteniendo múltiples asignaturas por IDs individuales:', ids);
+    
+    // Crear un array de observables, uno para cada ID
+    const observables = ids.map(id => 
+      this.obtenerAsignatura(id).pipe(
+        catchError(error => {
+          console.error(`Error al obtener asignatura ID ${id}:`, error);
+          return of(null); // Devolver null para las asignaturas que no se pueden obtener
+        })
+      )
+    );
+    
+    // Combinar todos los observables y filtrar los resultados nulos
+    return forkJoin(observables).pipe(
+      map(asignaturas => asignaturas.filter(a => a !== null) as Asignatura[]),
+      catchError(error => {
+        console.error('Error al combinar resultados de asignaturas:', error);
+        return of([]);
+      })
+    );
   }
 
   obtenerEstudiantesPorAsignatura(id: number, esProfesor: boolean = false): Observable<Estudiante[]> {

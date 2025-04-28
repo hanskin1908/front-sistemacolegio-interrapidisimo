@@ -53,7 +53,7 @@
                 <div *ngIf="formularioRegistro.get('rol')?.errors?.['required']">El rol es obligatorio</div>
               </div>
             </div>
-            <div class="mb-3" *ngIf="formularioRegistro.get('rol')?.value === 'estudiante'">
+            <div class="mb-3" *ngIf="formularioRegistro.get('rol')?.value === 'student'">
               <label for="idEstudiante" class="form-label">ID de Estudiante</label>
               <input 
                 type="number" 
@@ -66,7 +66,7 @@
                 <div *ngIf="formularioRegistro.get('idEstudiante')?.errors?.['required']">El ID de estudiante es obligatorio</div>
               </div>
             </div>
-            <div class="mb-3" *ngIf="formularioRegistro.get('rol')?.value === 'profesor'">
+            <div class="mb-3" *ngIf="formularioRegistro.get('rol')?.value === 'professor'">
               <label for="idProfesor" class="form-label">ID de Profesor</label>
               <input 
                 type="number" 
