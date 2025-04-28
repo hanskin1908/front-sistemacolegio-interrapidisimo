@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError, of, forkJoin } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Subject } from '../models/subject.model';
 import { Student } from '../models/student.model';
@@ -140,27 +140,37 @@ export class SubjectService {
       );
     }
     
-    // For multiple IDs, fetch each subject individually and combine results
-    console.log('Fetching multiple subjects by individual IDs:', ids);
+    // For multiple IDs, build the URL correctly
+    let url = `${this.apiUrl}/multiple?`;
+    // Add each ID as a separate parameter
+    ids.forEach((id, index) => {
+      url += `ids=${id}`;
+      if (index < ids.length - 1) {
+        url += '&';
+      }
+    });
     
-    // Create an array of observables, one for each ID
-    const observables = ids.map(id => 
-      this.getSubject(id).pipe(
-        catchError(error => {
-          console.error(`Error fetching subject ID ${id}:`, error);
-          return of(null); // Return null for subjects that can't be fetched
-        })
-      )
-    );
+    console.log('URL for fetching multiple subjects:', url);
     
-    // Combine all observables and filter out null results
-    return forkJoin(observables).pipe(
-      map(subjects => subjects.filter(s => s !== null) as Subject[]),
-      catchError(error => {
-        console.error('Error combining subject results:', error);
-        return of([]);
-      })
-    );
+    return this.http.get<any>(url)
+      .pipe(
+        map(response => {
+          if (response && response.exito && response.data) {
+            return response.data.map((item: any) => ({
+              id: item.id,
+              name: item.nombre,
+              code: item.codigo,
+              credits: item.creditos,
+              professorId: item.profesorId || 0,
+              professor: item.nombreProfesor ? 
+                this.createProfessorObject(item.profesorId, item.nombreProfesor) : 
+                undefined
+            }));
+          }
+          return [];
+        }),
+        catchError(this.handleError)
+      );
   }
 
   getStudentsBySubject(id: number, isProfessor: boolean = false): Observable<Student[]> {

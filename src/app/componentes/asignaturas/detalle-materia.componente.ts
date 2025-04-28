@@ -106,14 +106,14 @@ export class DetalleMateriaComponente implements OnInit {
       return;
     }
     this.cargando = true;
-    this.inscripcionServicio.obtenerInscripcionesAsignatura(materiaId).subscribe({
+    this.inscripcionServicio.obtenerCompaneros(materiaId, estudianteId).subscribe({
       next: (data: any) => {
-        console.log('Inscripciones obtenidas:', data);
+        console.log('Compañeros obtenidos:', data);
         this.companeros = data;
         this.cargando = false;
       },
       error: (err: any) => {
-        this.error = 'Error al cargar compau00f1eros de clase';
+        this.error = 'Error al cargar compañeros de clase';
         this.cargando = false;
         console.error(err);
       }

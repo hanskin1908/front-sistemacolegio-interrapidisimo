@@ -240,6 +240,7 @@ export class InscripcionServicio {
       .pipe(
         map(response => {
           if (response && response.exito && response.data) {
+            console.log('companeros',response.data)
             return response.data
               .filter((item: any) => item.estudianteId !== estudianteId)
               .map((item: any) => ({

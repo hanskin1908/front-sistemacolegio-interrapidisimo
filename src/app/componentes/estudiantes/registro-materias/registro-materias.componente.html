@@ -60,9 +60,25 @@
                   <td>{{ inscripcion.nombreProfesor }}</td>
                   <td>{{ inscripcion.creditos }}</td>
                   <td>
-                    <button class="btn btn-sm btn-info me-2" (click)="abrirModalCompaneros(inscripcion.materiaId)" id="btnVerCompaneros-{{inscripcion.materiaId}}" data-testid="ver-companeros-btn">
+                    <button class="btn btn-sm btn-outline-info me-2" type="button" data-bs-toggle="modal" [attr.data-bs-target]="'#companerosModal-' + inscripcion.id" data-testid="ver-companeros-btn">
                       <i class="bi bi-people"></i> Ver Compañeros
                     </button>
+                    <div class="modal fade companeros-modal" [id]="'companerosModal-' + inscripcion.id" tabindex="-1" aria-labelledby="companerosModalLabel" aria-hidden="true" data-bs-backdrop="static">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="companerosModalLabel">Compañeros de {{ inscripcion.nombreMateria }}</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <app-companeros [asignaturaId]="inscripcion.materiaId" [estudianteActualId]="estudianteId"></app-companeros>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     <button class="btn btn-sm btn-danger" (click)="desinscribirAsignatura(inscripcion.id)">
                       <i class="bi bi-trash"></i> Eliminar
                     </button>
@@ -110,31 +126,6 @@
             </div>
           </form>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal para mostrar compañeros -->
-<div class="modal fade" id="modalCompaneros" tabindex="-1" aria-labelledby="modalCompanerosLabel" aria-hidden="true" data-testid="classmates-modal">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content shadow">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="modalCompanerosLabel">
-          <i class="bi bi-people-fill me-2"></i>Compañeros de Clase
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body p-4">
-        <div *ngIf="!asignaturaSeleccionadaId" class="alert alert-warning">
-          No se ha seleccionado ninguna materia.
-        </div>
-        <app-companeros *ngIf="asignaturaSeleccionadaId" [asignaturaId]="asignaturaSeleccionadaId" [estudianteActualId]="estudianteId"></app-companeros>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          <i class="bi bi-x-circle me-1"></i>Cerrar
-        </button>
       </div>
     </div>
   </div>

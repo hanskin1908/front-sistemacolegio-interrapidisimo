@@ -29,7 +29,7 @@ export class CompanerosComponente implements OnInit {
     }
     
     this.cargando = true;
-    this.inscripcionServicio.obtenerInscripcionesAsignatura( this.estudianteActualId).subscribe({
+    this.inscripcionServicio.obtenerCompaneros(this.asignaturaId, this.estudianteActualId).subscribe({
       next: (data: any) => {
         this.companeros = data;
         this.cargando = false;
